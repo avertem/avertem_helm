@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "avertem.fullname" . }}
+  labels:
+    {{- include "avertem.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "avertem.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "avertem.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "avertem.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: https
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+            - name: rpc
+              containerPort: {{ .Values.service.rpcPort }}
+              protocol: TCP
+#          livenessProbe:
+#            httpGet:
+#              path: /
+#              port: https
+#          readinessProbe:
+#            httpGet:
+#              path: /
+#              port: https
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: KETO_rpc_peer
+              value: {{ .Values.service.env.KETO_rpc_peer }}
+            - name: KETO_consensus_keys
+              value: {{ .Values.service.env.KETO_consensus_keys }}
+            - name: PRODUCER_ENABLED
+              value: "{{ .Values.service.env.PRODUCER_ENABLED }}"
+            - name: KETO_TAIL
+              value: "{{ .Values.service.env.KETO_TAIL }}"
+            - name: KETO_account_hash
+              value: "{{ .Values.service.env.KETO_account_hash }}"
+            - name: KETO_public_key
+              value: "{{ .Values.service.env.KETO_public_key }}"
+            - name: KETO_private_key
+              value: "{{ .Values.service.env.KETO_private_key }}"
+            - name: KETO_consensus_keys
+              value: "{{ .Values.service.env.KETO_consensus_keys }}"
+            - name: KETO_IS_MASTER
+              value: "{{ .Values.service.env.KETO_IS_MASTER }}"
+          command: [ 'sh', '-c', '/opt/avertem/run_avertem.sh' ]
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
