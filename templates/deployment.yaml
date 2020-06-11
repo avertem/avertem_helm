@@ -63,6 +63,12 @@ spec:
               value: "{{ .Values.service.env.KETO_consensus_keys }}"
             - name: KETO_IS_MASTER
               value: "{{ .Values.service.env.KETO_IS_MASTER }}"
+          volumeMounts:
+            - name: data
+              mountPath: /opt/avertem/data/
+              {{- if .Values.persistence.subPath }}
+              subPath: {{ .Values.persistence.subPath }}
+              {{- end }}
           command: [ 'sh', '-c', '/opt/avertem/run_avertem.sh' ]
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -76,3 +82,11 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      volumes:
+      - name: data
+      {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.persistence.existingClaim | default (include "avertem/avertem" .) }}
+      {{- else }}
+        emptyDir: {}
+      {{- end -}}
