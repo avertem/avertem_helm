@@ -86,7 +86,7 @@ spec:
       - name: data
       {{- if .Values.persistence.enabled }}
         persistentVolumeClaim:
-          claimName: {{ .Values.persistence.existingClaim | default (include "avertem/avertem" .) }}
+          claimName: {{ .Values.persistence.existingClaim | default (include "avertem.fullname" .) }}
       {{- else }}
         emptyDir: {}
       {{- end -}}
