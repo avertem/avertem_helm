@@ -6,9 +6,10 @@ replicaCount: 1
 
 image:
   registry: docker.io
-  repository: avertem/avertem:latest
+  repository: avertem/avertem
   pullPolicy: IfNotPresent
   debug: false
+  version: latest
 
 imagePullSecrets: []
 nameOverride: ""
