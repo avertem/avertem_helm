@@ -11,5 +11,9 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    - port: {{ .Values.service.rpcPort }}
+      targetPort: rpc
+      protocol: TCP
+      name: rpc
   selector:
     {{- include "avertem.selectorLabels" . | nindent 4 }}
