@@ -63,6 +63,8 @@ spec:
               value: "{{ .Values.service.env.KETO_consensus_keys }}"
             - name: KETO_IS_MASTER
               value: "{{ .Values.service.env.KETO_IS_MASTER }}"
+            - name: KETO_hostname
+              value: "{{ .Values.service.env.KETO_hostname }}"
           volumeMounts:
             - name: data
               mountPath: /opt/avertem/data/
