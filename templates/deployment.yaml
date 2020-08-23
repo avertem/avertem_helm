@@ -63,6 +63,8 @@ spec:
               value: "{{ .Values.service.env.KETO_consensus_keys }}"
             - name: KETO_IS_MASTER
               value: "{{ .Values.service.env.KETO_IS_MASTER }}"
+            - name: KETO_genesis_url
+              value: "{{ .Values.service.env.KETO_genesis_url }}"
             - name: KETO_hostname
               value: "{{ .Values.service.env.KETO_hostname }}"
           volumeMounts:
